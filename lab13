@@ -1,0 +1,184 @@
+//============================================================================
+// Name         : lab14.cpp
+// Author       : Khalid Mengal
+// Version      : 1.0
+// Date Created : 04-05-2020
+// Date Modified: 04-05-2020
+// Copyright    : All rights are reserved
+// Description  : Sorting Algorithms (Selection Sort, Bubble Sort, Insertion Sort, Merge Sort, Quick Sort, Heap Sort)
+//============================================================================
+
+#include<iostream>
+#include<vector>
+#include<iomanip>
+#include<algorithm>
+using namespace std;
+#define SIZE 10
+#define MAX 500
+template <typename T> void selection_sort(T array[], int n);
+template <typename T> void bubble_sort(T array[], int n);
+template <typename T> void insertion_sort(T array[], int n);
+template <typename T> void merge_sort(T array[], int left, int right);
+template <typename T> void merge(T array[], int left, int right, int mid);
+template <typename T> void quick_sort(T array[], int left, int right);
+template <typename T> int partition(T array[], int left, int right);
+template <typename T> void print(T array[], int size);
+int main()
+{
+    int array[SIZE];
+    srand(time(NULL));
+    for(int i=0; i<SIZE;i++) array[i] = rand()%MAX;
+    
+    int start = clock();
+    selection_sort(array,SIZE);
+    int stop = clock ();
+    print(array,SIZE);
+    cout<<"Selection Sort took: "<<float(stop - start )/  CLOCKS_PER_SEC*1000<<" milliseconds"<<endl;
+    random_shuffle(array,array+SIZE);
+
+    start = clock();
+    bubble_sort(array,SIZE);
+    stop = clock ();
+    print(array,SIZE);
+    cout<<"Bubble Sort took: "<<float(stop - start )/  CLOCKS_PER_SEC*1000<<" milliseconds"<<endl;
+    random_shuffle(array,array+SIZE);
+
+    start = clock();
+    insertion_sort(array,SIZE);
+    stop = clock ();
+    print(array,SIZE);
+    cout<<"Insertion Sort took: "<<float(stop - start )/  CLOCKS_PER_SEC*1000<<" milliseconds"<<endl;
+    random_shuffle(array,array+SIZE);
+
+    start = clock();
+    merge_sort(array,0,SIZE-1);
+    stop = clock ();
+    print(array,SIZE);
+    cout<<"Merge Sort took: "<<float(stop - start )/  CLOCKS_PER_SEC*1000<<" milliseconds"<<endl;
+    random_shuffle(array,array+SIZE);
+
+    start = clock();
+    quick_sort(array,0,SIZE-1);
+    stop = clock ();
+    print(array,SIZE);
+    cout<<"Quick Sort took: "<<float(stop - start )/  CLOCKS_PER_SEC*1000<<" milliseconds"<<endl;
+
+    return EXIT_SUCCESS;
+}
+//========================================================
+template <typename T> void print(T array[], int size)
+{
+    for(int i=0; i<size; i++)
+        cout<<array[i]<<" ";
+    cout<<endl;
+}
+template <typename T>
+void selection_sort(T array[], int n){
+    int i, j, the_min;
+    for(i = 0; i < n-1; i++){
+        the_min = i;
+        for(j = i+1; j < n; j++){
+            if(array[i]>array[j]){
+                the_min = j;
+                int temp = array[i];
+                array[i] = array[j];
+                array[j] = temp;
+            }
+        }
+    }
+    
+}
+template <typename T>
+void bubble_sort(T array[], int n){
+    int i, j;
+    for(i = 0; i < n-1; i++){
+        for(j = 0; j < n-i-1; j++){
+            if(array[j]>array[j+1]){
+                int temp = array[j];
+                array[j] = array[j+1];
+                array[j+1] = temp;
+            }
+        }
+    }
+
+}
+template <typename T>
+void insertion_sort(T array[], int n){
+    int i, j, now;
+    for(i = 1; i < n; i++){
+        now = array[i];
+        j = i -1;
+        while(array[j] > now && j >= 0){
+            array[j+1] = array[j];
+            j--;
+        }
+        array[j + 1] = now;
+    }
+}
+template <typename T>
+void merge_sort(T array[], int left, int right){
+    if(left > right){
+        return;
+    }
+    int mid = (right + left)/2;
+    merge_sort(array, left, mid);
+    merge_sort(array, mid+1, right);
+    merge(array, left, mid, right);
+}
+template <typename T>
+void merge(T array[], int left, int right, int mid){
+    int arrayLeft = mid - left + 1; int arrayRight = right - mid;
+    int *leftArray[arrayLeft]; int *rightArray[arrayRight];
+    for(int i = 0; i < arrayLeft; i++){
+        leftArray[i] = array[left + i];
+    }
+    for(int j = 0; j < arrayRight; j++){
+        rightArray[j] = array[mid + j];
+    }
+    int index_left = 0; int index_right = 0; int index_merged = left;
+    while(index_left < arrayLeft && index_right < arrayRight){
+        if(leftArray[index_left] <= rightArray[index_right]){
+            array[index_merged] = array[index_left];
+            index_left++;
+        }
+        else{
+            array[index_merged] = array[index_right];
+            index_right++;
+        }
+        index_merged++;
+    }
+    for(index_left = index_left; index_left < arrayLeft; index_left++){
+        array[index_merged] = array[index_left];
+        index_merged++;
+    }
+    for(index_right = index_right; index_right < arrayRight; index_right++){
+        array[index_merged] = array[index_right];
+        index_merged++;
+    }
+}
+template <typename T>
+void quick_sort(T array[], int left, int right){
+    if(left < right){
+        int p = partition(array, left, right);
+        quick_sort(array, left, p-1);
+        quick_sort(array, p, right);
+    }
+}
+template <typename T>
+int partition(T array[], int left, int right){
+    int p = array[right];
+    int i = left - 1;
+    for(int j = left; j < right; j++){
+        if(array[j] <= p){
+            i++;
+            int temp = array[i];
+            array[i] = array[j];
+            array[j] = temp;
+        }
+    }
+    int temp = array[i+1];
+    array[i+1] = array[right];
+    array[right] = temp;
+
+    return i+1;
+}
